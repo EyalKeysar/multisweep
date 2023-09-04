@@ -1,0 +1,8 @@
+
+
+OPEN = 1
+CLOSED = 0
+FLAG = 2
+
+MINE = -1
+EMPTY = 0
