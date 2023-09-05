@@ -16,7 +16,7 @@ class WindowHandler():
         self.current_window = new_window(self.root, *args, **kwargs)
         self.stack.append(self.current_window)
     
-    def PopWindow(self, new_window, *args, **kwargs):
+    def PushWindow(self, new_window, *args, **kwargs):
         self.current_window = new_window(self.root, *args, **kwargs)
         self.stack.append(self.current_window)
 

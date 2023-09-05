@@ -36,6 +36,7 @@ class MainWindow(Window):
 
     def login_command(self):
         self.window_handler.PopWindow(LoginWindow, self.serverAPI)
+        
 
 
     def register_command(self):

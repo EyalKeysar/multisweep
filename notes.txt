@@ -1,0 +1,5 @@
+Just finished auth,
+need to open lobby on auth = True
+added in periodic check for auth but the window manager doesent support
+popping windows yet and thinks the top window is the last to be open but login was closed
+and considered to be the top window, need to add poping functionality

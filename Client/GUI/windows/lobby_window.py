@@ -1,9 +1,9 @@
 import tkinter as tk
 
-from windsows_constants import *
-from login_window import LoginWindow
-from register_window import RegisterWindow
-from window import Window
+from Client.GUI.windows.windsows_constants import *
+from Client.GUI.windows.login_window import LoginWindow
+from Client.GUI.windows.register_window import RegisterWindow
+from Client.GUI.windows.window import Window
 
 
 class LobbyWindow(Window):

@@ -7,6 +7,8 @@ class ServerAPI:
         self.server_socket = socket.socket()
         self.server_socket.settimeout(0.5)
 
+        self.is_authenticated = False
+
         self.server_socket.connect((IP, PORT))
         print("Connected to server")
 
@@ -24,7 +26,11 @@ class ServerAPI:
         try:
             data = self.server_socket.recv(1024).decode()
             print(data)
-            return data == LOGIN_RES_TRUE
+            if(data == LOGIN_RES_TRUE):
+                self.is_authenticated = True
+                return True
+            else:
+                return False
         
         except socket.timeout:
             return False
@@ -34,7 +40,11 @@ class ServerAPI:
         try:
             data = self.server_socket.recv(1024).decode()
             print(data)
-            return data == REGISTER_RES_TRUE
+            if(data == REGISTER_RES_TRUE):
+                self.is_authenticated = True
+                return True
+            else:
+                return False
         
         except socket.timeout:
             return False

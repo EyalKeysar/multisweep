@@ -10,12 +10,11 @@ class RepoAPI():
             return False
 
         # Format the account information
-        account_info = f"{name};{password};{email}\n"
+        account_info = f"\n{name};{password};{email}"
 
         # Append the account information to the text file
         with open(self.repo_path, 'a') as file:
             file.write(account_info)
-            file.write('\n')
 
         file.close()
         return True
