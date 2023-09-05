@@ -1,5 +1,6 @@
 import random
-from LogicConstants import *
+
+from Server.Logic.LogicConstants import *
 
 
 class Grid():
