@@ -8,8 +8,11 @@ from Client.GUI.windows.windsows_constants import *
 from Client.GUI.windows.window import Window
 
 class RegisterWindow(Window):
-    def __init__(self, parent):
+    def __init__(self, parent, serverAPI):
         super().__init__(parent)
+
+        self.serverAPI = serverAPI
+
         self.geometry(f"{REGISTER_WINDOW_WIDTH}x{REGISTER_WINDOW_HEIGHT}")
         self.title("Register")
         self.resizable(False, False)
@@ -42,6 +45,14 @@ class RegisterWindow(Window):
         password = self.password_entry.get()
         password_confirm = self.password_confirm_entry.get()
         email = self.email_entry.get()
+        res = self.serverAPI.Register(username, password, email)
+        if(res):
+            tk.messagebox.showinfo("Success", "Registered successfully")
+            self.destroy()
+        else:
+            tk.messagebox.showerror("Error", "Registration failed")
+            self.destroy()
+
 
         
 

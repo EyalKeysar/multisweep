@@ -2,6 +2,7 @@
 
 class Client:
     def __init__(self, client_socket, address) -> None:
+        self.in_handle = False
         self.data = {
             "client_socket": client_socket,
             "address": address,
@@ -9,7 +10,7 @@ class Client:
             "username": None
         }
         print(f"Client {self.data} initialized")
-        
+
     def IsAuthenticated(self):
         return self.data["is_authenticated"]
     

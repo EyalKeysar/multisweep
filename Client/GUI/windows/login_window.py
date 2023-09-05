@@ -14,7 +14,6 @@ class LoginWindow(Window):
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
-        self.logged_in = False
         self.username = ""
         self.password = ""
 
@@ -36,6 +35,12 @@ class LoginWindow(Window):
 
         print("logging in by username: " + self.username + " and password: " + self.password)
 
-        self.serverAPI.Login(self.username, self.password)
+        res = self.serverAPI.Login(self.username, self.password)
 
-        self.password_label.config(text=str(self.serverAPI.CheckConnection()))
+        if(res):
+            tk.messagebox.showinfo("Success", "Logged in successfully")
+            self.destroy()
+
+        else:
+            tk.messagebox.showerror("Error", "Login failed")
+            self.destroy()

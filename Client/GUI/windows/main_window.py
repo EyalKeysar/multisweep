@@ -39,5 +39,5 @@ class MainWindow(Window):
 
 
     def register_command(self):
-        self.window_handler.PopWindow(RegisterWindow)        
+        self.window_handler.PopWindow(RegisterWindow, self.serverAPI)        
 
