@@ -3,3 +3,9 @@ need to open lobby on auth = True
 added in periodic check for auth but the window manager doesent support
 popping windows yet and thinks the top window is the last to be open but login was closed
 and considered to be the top window, need to add poping functionality
+
+--- FIXED ---
+
+Just finshed lobby and player selection in client side,
+next need to serverAPI the selected player and send it to server
+to create a Room.
