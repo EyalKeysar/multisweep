@@ -26,4 +26,4 @@ class WindowHandler():
 
 
     def GetCurWindow(self):
-        return type(self.current_window)
+        return self.current_window

@@ -48,3 +48,16 @@ class ServerAPI:
         
         except socket.timeout:
             return False
+        
+    def GetAvailableUsers(self):
+        self.server_socket.send(GET_AVAILABLE_USERS_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data.startswith(GET_AVAILABLE_USERS_RES)):
+                return data[len(GET_AVAILABLE_USERS_RES):].split(';')
+            else:
+                return []
+        
+        except socket.timeout:
+            return []

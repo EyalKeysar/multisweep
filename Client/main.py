@@ -22,18 +22,26 @@ def periodic(root, window_handler, serverAPI):
     
     serverAPI.CheckConnection()
 
-    if(serverAPI.is_authenticated 
-       and ( window_handler.GetCurWindow() == MainWindow 
-       or window_handler.GetCurWindow() == LoginWindow 
-       or window_handler.GetCurWindow() == RegisterWindow)):
-        
-        window_handler.ChangeWindow(LobbyWindow)
-
-    elif(serverAPI.is_authenticated == True):
-        print(str(window_handler.GetCurWindow()) + "eq" +str(window_handler.GetCurWindow() == LoginWindow))
+    auth_check(serverAPI, window_handler)
+    select_player_check(serverAPI, window_handler)
 
     root.after(1000, periodic, root, window_handler, serverAPI)
 
+def auth_check(serverAPI, window_handler):
+    if(serverAPI.is_authenticated 
+       and ( type(window_handler.GetCurWindow()) == MainWindow 
+       or type(window_handler.GetCurWindow()) == LoginWindow 
+       or type(window_handler.GetCurWindow()) == RegisterWindow)):
+        
+        window_handler.ChangeWindow(LobbyWindow, serverAPI)
+
+
+def select_player_check(serverAPI, window_handler):
+    if(serverAPI.is_authenticated 
+       and type(window_handler.GetCurWindow()) == LobbyWindow):
+        if(window_handler.current_window.selected_player != None):
+            print("selected player: " + window_handler.current_window.selected_player)
+            window_handler.GetCurWindow().destroy()
 
 
 if __name__ == "__main__":

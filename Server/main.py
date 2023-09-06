@@ -59,6 +59,14 @@ class Server:
                     print(f"LOGIN {username} {password} failed")
                     client_socket.send(LOGIN_RES_FALSE.encode())
 
+            elif(command == GET_AVAILABLE_USERS_REQ):
+                if(client.IsAuthenticated()):
+                    users = self.net_handler.clients
+                    users = [user.GetUsername() for user in users if user.IsAuthenticated()]
+                    users = ';'.join(users)
+                    client_socket.send((GET_AVAILABLE_USERS_RES + users).encode())
+                    print(f"GET_AVAILABLE_USERS {users}")
+
             elif(command == REGISTER_REQ):
                 username, password, email = parameters.split(';')
                 res = self.repoAPI.add_account(username, password, email)

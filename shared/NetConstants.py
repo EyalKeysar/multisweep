@@ -14,3 +14,6 @@ LOGIN_RES_FALSE = "LGNFLS"
 REGISTER_REQ = "RGSREQ" # Register request
 REGISTER_RES_TRUE = "RGSTRE"
 REGISTER_RES_FALSE = "RGSFLS"
+
+GET_AVAILABLE_USERS_REQ = "GAVREQ" # Get available users request
+GET_AVAILABLE_USERS_RES = "GAVRES" # Get available users response
