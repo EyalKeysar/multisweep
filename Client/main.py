@@ -24,7 +24,7 @@ def periodic(root, window_handler, serverAPI):
     serverAPI.CheckConnection()
 
     auth_check(serverAPI, window_handler)
-    select_player_check(serverAPI, window_handler)
+    select_room_check(serverAPI, window_handler)
 
     root.after(1000, periodic, root, window_handler, serverAPI)
 
@@ -37,16 +37,12 @@ def auth_check(serverAPI, window_handler):
         window_handler.ChangeWindow(LobbyWindow, serverAPI)
 
 
-def select_player_check(serverAPI, window_handler):
+def select_room_check(serverAPI, window_handler):
     if(serverAPI.is_authenticated 
        and type(window_handler.GetCurWindow()) == LobbyWindow):
-        if(window_handler.current_window.selected_player != None):
-            print("selected player: " + window_handler.current_window.selected_player)
-            
-            if(serverAPI.SelectPlayer(window_handler.current_window.selected_player)):
-                print("server acknowledged player selection")
-                window_handler.GetCurWindow().destroy()
-                window_handler.ChangeWindow(RoomWindow, window_handler, serverAPI)
+        if(window_handler.current_window.selected_room != None):
+            print("selected room: " + window_handler.current_window.selected_room)
+
             
 
 

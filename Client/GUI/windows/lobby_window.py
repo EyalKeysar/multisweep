@@ -10,7 +10,7 @@ class LobbyWindow(Window):
     def __init__(self, parent, serverAPI):
         super().__init__(parent)
 
-        self.selected_player = None
+        self.selected_room = None
 
         self.need_update = True # flag to check for available users
         self.parent = parent
@@ -26,36 +26,34 @@ class LobbyWindow(Window):
         self.connection_status_label.pack()
         self.title_label.pack()
 
-        self.users_selection = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
-        for user in self.serverAPI.GetAvailableUsers():
-            self.users_selection.insert(tk.END, str(user))
-        self.users_selection.pack()
+        self.room_selection = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
+        for room in self.serverAPI.GetAvailableRooms():
+            self.room_selection.insert(tk.END, str(room))
 
-        self.parent.after(1000, self.get_available_users)
+        self.room_selection.pack()
+
+        self.parent.after(1000, self.get_available_rooms)
 
 
-    def get_available_users(self):
-
+    def get_available_rooms(self):
         if(self.check_selected()):
             return
         
 
-        self.users_selection.delete(0, 'end')
+        self.room_selection.delete(0, 'end')
 
-        for user in self.serverAPI.GetAvailableUsers():
-            self.users_selection.insert(tk.END, str(user))
+        for room in self.serverAPI.GetAvailableUsers():
+            self.room_selection.insert(tk.END, str(room))
         
 
         if(self.need_update):
-            self.parent.after(1000, self.get_available_users)
+            self.parent.after(1000, self.get_available_rooms)
 
     def check_selected(self):
-        if(self.users_selection.curselection()):
-            self.selected_player = self.users_selection.get(self.users_selection.curselection())
+        if(self.room_selection.curselection()):
+            self.selected_room = self.room_selection.get(self.room_selection.curselection())
             self.need_update = False
             return True
         else:
             return False
-    
-
 
