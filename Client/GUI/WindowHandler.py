@@ -20,5 +20,10 @@ class WindowHandler():
         self.current_window = new_window(self.root, *args, **kwargs)
         self.stack.append(self.current_window)
 
+    def PopWindow(self):
+        popped_window = self.stack.pop()
+        self.current_window = self.stack[-1]
+
+
     def GetCurWindow(self):
-        return self.current_window
+        return type(self.current_window)

@@ -22,10 +22,15 @@ def periodic(root, window_handler, serverAPI):
     
     serverAPI.CheckConnection()
 
-    if(serverAPI.is_authenticated and window_handler.GetCurWindow() == MainWindow):
+    if(serverAPI.is_authenticated 
+       and ( window_handler.GetCurWindow() == MainWindow 
+       or window_handler.GetCurWindow() == LoginWindow 
+       or window_handler.GetCurWindow() == RegisterWindow)):
+        
         window_handler.ChangeWindow(LobbyWindow)
-    elif(serverAPI.is_authenticated == True and window_handler.GetCurWindow() != MainWindow):
-        print(str(window_handler.GetCurWindow()))
+
+    elif(serverAPI.is_authenticated == True):
+        print(str(window_handler.GetCurWindow()) + "eq" +str(window_handler.GetCurWindow() == LoginWindow))
 
     root.after(1000, periodic, root, window_handler, serverAPI)
 

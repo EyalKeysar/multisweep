@@ -35,10 +35,10 @@ class MainWindow(Window):
         self.register_button.pack()
 
     def login_command(self):
-        self.window_handler.PopWindow(LoginWindow, self.serverAPI)
+        self.window_handler.PushWindow(LoginWindow, self.serverAPI)
         
 
 
     def register_command(self):
-        self.window_handler.PopWindow(RegisterWindow, self.serverAPI)        
+        self.window_handler.PushWindow(RegisterWindow, self.serverAPI)        
 

@@ -44,3 +44,6 @@ class LoginWindow(Window):
         else:
             tk.messagebox.showerror("Error", "Login failed")
             self.destroy()
+
+    def destroy(self) -> None:
+        return super().destroy()
