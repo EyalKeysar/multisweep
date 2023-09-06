@@ -61,3 +61,16 @@ class ServerAPI:
         
         except socket.timeout:
             return []
+        
+    def SelectPlayer(self, username):
+        self.server_socket.send((SELECT_PLAYER_REQ + username).encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == SELECT_PLAYER_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False

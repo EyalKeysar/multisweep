@@ -17,3 +17,7 @@ REGISTER_RES_FALSE = "RGSFLS"
 
 GET_AVAILABLE_USERS_REQ = "GAVREQ" # Get available users request
 GET_AVAILABLE_USERS_RES = "GAVRES" # Get available users response
+
+SELECT_PLAYER_REQ = "SLPREQ" # Select player request
+SELECT_PLAYER_RES_TRUE = "SLPTRE"
+SELECT_PLAYER_RES_FALSE = "SLPFLS"
