@@ -6,3 +6,9 @@ FLAG = 2
 
 MINE = -1
 EMPTY = 0
+
+MIN_SIZE = 10
+MAX_SIZE = 50
+
+MIN_MINES = 1
+MAX_MINES = 20
