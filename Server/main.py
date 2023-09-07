@@ -4,6 +4,7 @@ import socket
 from Server.Logic.Grid import Grid
 from Server.ServerNetHandler import ServerNetHandler
 from Server.repo_api import RepoAPI
+from Server.Room import Room
 from shared.NetConstants import *
 
 
@@ -15,7 +16,7 @@ class Server:
 
         self.repoAPI = RepoAPI()
 
-        self.repoAPI.add_account("test", "test", "asd")
+        self.rooms = []
 
 
     def run(self):
@@ -59,14 +60,6 @@ class Server:
                     print(f"LOGIN {username} {password} failed")
                     client_socket.send(LOGIN_RES_FALSE.encode())
 
-            elif(command == GET_AVAILABLE_USERS_REQ):
-                if(client.IsAuthenticated()):
-                    users = self.net_handler.clients
-                    users = [user.GetUsername() for user in users if user.IsAuthenticated()]
-                    users = ';'.join(users)
-                    client_socket.send((GET_AVAILABLE_USERS_RES + users).encode())
-                    print(f"GET_AVAILABLE_USERS {users}")
-
             elif(command == REGISTER_REQ):
                 username, password, email = parameters.split(';')
                 res = self.repoAPI.add_account(username, password, email)
@@ -79,6 +72,48 @@ class Server:
                 else:
                     print(f"REGISTER {username} {password} {email} failed")
                     client_socket.send(REGISTER_RES_FALSE.encode())
+
+            elif(command == GET_AVAILABLE_ROOMS_REQ):
+                if(client.IsAuthenticated()):
+                    rooms_names = [room.name for room in self.rooms]
+                    rooms_names = ';'.join(rooms_names)
+                    client_socket.send((GET_AVAILABLE_ROOMS_RES + rooms_names).encode())
+                    print(f"GET_AVAILABLE_USERS {rooms_names}")
+
+            elif(command == ADD_ROOM_REQ):
+                if(client.IsAuthenticated()):
+                    room = Room(client)
+                    self.rooms.append(room)
+                    client_socket.send(ADD_ROOM_RES_TRUE.encode())
+                    print(f"ADD_ROOM {room.name} success")
+
+            elif(command == JOIN_ROOM_REQ):
+                if(client.IsAuthenticated()):
+                    room_name = parameters
+                    room = [room for room in self.rooms if room.name == room_name][0]
+                    res = room.AddClient(client)
+                    if(res):
+                        client_socket.send(JOIN_ROOM_RES_TRUE.encode())
+                        print(f"JOIN_ROOM {room.name} success")
+                    else:
+                        client_socket.send(JOIN_ROOM_RES_FALSE.encode())
+                        print(f"JOIN_ROOM {room.name} failed")
+
+            elif(command == GET_USERS_IN_MY_ROOM_REQ):
+                if(client.IsAuthenticated()):
+                    room = [room for room in self.rooms if room.host == client][0]
+                    users = room.GetUsersNames()
+                    users = ';'.join(users)
+                    client_socket.send((GET_USERS_IN_MY_ROOM_RES + users).encode())
+                    print(f"GET_USERS_IN_MY_ROOM {users}")
+
+            elif(command == GET_HOST_USERNAME_REQ):
+                if(client.IsAuthenticated()):
+                    room = [room for room in self.rooms if client in room.clients][0]
+                    host_username = room.host.GetUsername()
+                    client_socket.send((GET_HOST_USERNAME_RES + host_username).encode())
+                    print(f"GET_HOST_USERNAME {host_username}")
+                    
 
 
             

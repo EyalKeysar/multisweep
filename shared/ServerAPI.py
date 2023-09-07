@@ -28,6 +28,7 @@ class ServerAPI:
             print(data)
             if(data == LOGIN_RES_TRUE):
                 self.is_authenticated = True
+                self.username = username
                 return True
             else:
                 return False
@@ -42,6 +43,7 @@ class ServerAPI:
             print(data)
             if(data == REGISTER_RES_TRUE):
                 self.is_authenticated = True
+                self.username = username
                 return True
             else:
                 return False
@@ -49,28 +51,71 @@ class ServerAPI:
         except socket.timeout:
             return False
         
-    def GetAvailableUsers(self):
-        self.server_socket.send(GET_AVAILABLE_USERS_REQ.encode())
+    def GetUsername(self):
+        return self.username
+        
+    def GetAvailableRooms(self):
+        self.server_socket.send(GET_AVAILABLE_ROOMS_REQ.encode())
         try:
             data = self.server_socket.recv(1024).decode()
             print(data)
-            if(data.startswith(GET_AVAILABLE_USERS_RES)):
-                return data[len(GET_AVAILABLE_USERS_RES):].split(';')
+            if(data.startswith(GET_AVAILABLE_ROOMS_RES)):
+                return data[len(GET_AVAILABLE_ROOMS_RES):].split(';')
             else:
                 return []
         
         except socket.timeout:
             return []
         
-    def SelectPlayer(self, username):
-        self.server_socket.send((SELECT_PLAYER_REQ + username).encode())
+    def CreateRoom(self):
+        self.server_socket.send(ADD_ROOM_REQ.encode())
         try:
             data = self.server_socket.recv(1024).decode()
             print(data)
-            if(data == SELECT_PLAYER_RES_TRUE):
+            if(data == ADD_ROOM_RES_TRUE):
                 return True
             else:
                 return False
         
         except socket.timeout:
             return False
+        
+    def JoinRoom(self, roomname):
+        self.server_socket.send((JOIN_ROOM_REQ + roomname).encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == JOIN_ROOM_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False
+        
+
+    def GetHostUsername(self):
+        self.server_socket.send(GET_HOST_USERNAME_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data.startswith(GET_HOST_USERNAME_RES)):
+                return data[len(GET_HOST_USERNAME_RES):]
+            else:
+                return None
+        
+        except socket.timeout:
+            return None
+    
+    def GetUsersInMyRoom(self):
+        self.server_socket.send(GET_USERS_IN_MY_ROOM_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data.startswith(GET_USERS_IN_MY_ROOM_RES)):
+                return data[len(GET_USERS_IN_MY_ROOM_RES):].split(';')
+            else:
+                return []
+        
+        except socket.timeout:
+            return []

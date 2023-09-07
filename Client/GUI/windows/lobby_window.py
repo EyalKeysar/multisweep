@@ -11,6 +11,7 @@ class LobbyWindow(Window):
         super().__init__(parent)
 
         self.selected_room = None
+        self.created_room = False
 
         self.need_update = True # flag to check for available users
         self.parent = parent
@@ -20,16 +21,23 @@ class LobbyWindow(Window):
         self.title(GAME_NAME)
         self.resizable(False, False)
 
+
         self.connection_status_label = tk.Label(self, text="Disconnected", bg="#FF0000", width=SCREEN_WIDTH, height=CONNECTION_STATUS_BAR_HEIGHT)
         self.title_label = tk.Label(self, text = LOBBY_TITLE_TXT, bg = TITLE_BG_CLR, width=SCREEN_WIDTH, height=SIGN_IN_TITLE_HEIGHT, font = TITLE_TXT_FONT)
 
         self.connection_status_label.pack()
         self.title_label.pack()
 
+
+
         self.room_selection = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
+        
         for room in self.serverAPI.GetAvailableRooms():
             self.room_selection.insert(tk.END, str(room))
 
+        self.create_room_button = tk.Button(self, text = "Create Room", command=self.create_room_command , font=BTN_FONT, bg=BTN_BG_CLR, width=BTN_WIDTH, height=BTN_HEIGHT, activebackground=BTN_CLR_ON_CLICK)
+
+        self.create_room_button.pack()
         self.room_selection.pack()
 
         self.parent.after(1000, self.get_available_rooms)
@@ -42,7 +50,7 @@ class LobbyWindow(Window):
 
         self.room_selection.delete(0, 'end')
 
-        for room in self.serverAPI.GetAvailableUsers():
+        for room in self.serverAPI.GetAvailableRooms():
             self.room_selection.insert(tk.END, str(room))
         
 
@@ -56,4 +64,11 @@ class LobbyWindow(Window):
             return True
         else:
             return False
+        
+    def create_room_command(self):
+        if(self.serverAPI.CreateRoom()):
+            self.need_update = False
+            self.created_room = True
+        else:
+            self.created_room = False
 
