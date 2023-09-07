@@ -5,6 +5,7 @@ from Server.Logic.Grid import Grid
 from Server.ServerNetHandler import ServerNetHandler
 from Server.repo_api import RepoAPI
 from Server.Room import Room
+from Server.Logic.LogicConstants import *
 from shared.NetConstants import *
 
 
@@ -113,16 +114,59 @@ class Server:
                     host_username = room.host.GetUsername()
                     client_socket.send((GET_HOST_USERNAME_RES + host_username).encode())
                     print(f"GET_HOST_USERNAME {host_username}")
+
+            elif(command == SET_GAME_SETTINGS_REQ):
+                if(client.IsAuthenticated()):
+                    room = [room for room in self.rooms if client == room.host][0]
+                    if(room == None):
+                        client_socket.send(SET_GAME_SETTINGS_RES_FALSE.encode())
+                        print(f"SET_GAME_SETTINGS failed, no room your host of")
+                    else:
+                        numofmines = int(parameters.split(';')[0])
+                        boardsize = int(parameters.split(';')[1])
+
+                        if(numofmines < MIN_MINES or numofmines > MAX_MINES or boardsize < MIN_SIZE or boardsize > MAX_SIZE):
+                            client_socket.send(SET_GAME_SETTINGS_RES_FALSE.encode())
+                            print(f"SET_GAME_SETTINGS failed, invalid parameters")
+                        else:
+                            room.num_of_mines = numofmines
+                            room.board_size = boardsize
+                            client_socket.send(SET_GAME_SETTINGS_RES_TRUE.encode())
+                            print(f"SET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
                     
-
-
+            elif(command == GET_GAME_SETTINGS_REQ):
+                if(client.IsAuthenticated()):
+                    room = [room for room in self.rooms if client in room.clients][0]
+                    if(room == None):
+                        client_socket.send(GET_GAME_SETTINGS_RES.encode())
+                        print(f"GET_GAME_SETTINGS failed, no room your in")
+                    else:
+                        client_socket.send((GET_GAME_SETTINGS_RES + str(room.num_of_mines) + ';' + str(room.board_size)).encode())
+                        print(f"GET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
             
+            elif(command == START_GAME_REQ):
+                if(client.IsAuthenticated()):
+                    room = [room for room in self.rooms if client == room.host][0]
+                    if(room == None):
+                        client_socket.send(START_GAME_RES_FALSE.encode())
+                        print(f"START_GAME failed, no room your host of")
+                    else:
+                        client_socket.send(START_GAME_RES_TRUE.encode())
+                        print(f"START_GAME success")
+                        self.handle_client_ingame(client, room)
+
+
             else:
                 print("!@!@!@! UNKNOWN  " + str(data))
 
         except socket.timeout:
             print("HandleClient timeout")
         client.in_handle = False
+
+    def handle_client_ingame(self, client, room):
+        is_host = client == room.host
+        
+        pass
 
 if(__name__ == "__main__"):
     server = Server().run()

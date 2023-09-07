@@ -119,3 +119,29 @@ class ServerAPI:
         
         except socket.timeout:
             return []
+        
+    def SetGameSettings(self, num_of_mines, boardsize):
+        self.server_socket.send((SET_GAME_SETTINGS_REQ + str(num_of_mines) + ';' + str(boardsize)).encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == SET_GAME_SETTINGS_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False
+        
+    def GetGameSettings(self):
+        self.server_socket.send(GET_GAME_SETTINGS_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data.startswith(GET_GAME_SETTINGS_RES)):
+                return data[len(GET_GAME_SETTINGS_RES):].split(';')
+            else:
+                return []
+        
+        except socket.timeout:
+            return []

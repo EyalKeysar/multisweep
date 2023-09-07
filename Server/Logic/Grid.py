@@ -1,16 +1,17 @@
 import random
 
 from Server.Logic.LogicConstants import *
+# from LogicConstants import *
 
 
 class Grid():
-    def __init__(self) -> None:
+    def __init__(self, size) -> None:
         pass
 
     def random_grid(self, high, width, num_of_mines):
         self.grid = [[0 for x in range(width )] for y in range(high )]
         self.upper_grid = [[0 for x in range(width )] for y in range(high )]
-        self.high = high
+        self.hight = high
         self.width = width
         self.num_of_mines = num_of_mines
 
@@ -24,32 +25,46 @@ class Grid():
                 self.grid[random_y][random_x] = MINE
 
     def calculate_nums(self):
-        for y in range(self.high):
+        for y in range(self.hight):
             for x in range(self.width):
                 if self.grid[y][x] == MINE:
 
-                    if(y < self.high - 1):
-                        self.grid[y+1][x] += 1
+                    if(y < self.hight - 1):
+                        if(self.grid[y+1][x] != MINE):
+                            self.grid[y+1][x] += 1
                     if(y > 0):
-                        self.grid[y-1][x] += 1
+                        if(self.grid[y-1][x] != MINE):
+                            self.grid[y-1][x] += 1
                     if(x < self.width - 1):
-                        self.grid[y][x+1] += 1
+                        if(self.grid[y][x+1] != MINE):
+                            self.grid[y][x+1] += 1
                     if(x > 0):
-                        self.grid[y][x-1] += 1
-                    if(y < self.high - 1 and x < self.width - 1 ):
-                        self.grid[y+1][x+1] += 1
+                        if(self.grid[y][x-1] != MINE):
+                            self.grid[y][x-1] += 1
+
+                    if(y < self.hight - 1 and x < self.width - 1 ):
+                        if(self.grid[y+1][x+1] != MINE):
+                            self.grid[y+1][x+1] += 1
                     if(y > 0 and x > 0):
-                        self.grid[y-1][x-1] += 1
-                    if(y < self.high -1 and x > 0):
-                        self.grid[y+1][x-1] += 1
+                        if(self.grid[y-1][x-1] != MINE):
+                            self.grid[y-1][x-1] += 1
+                    if(y < self.hight -1 and x > 0):
+                        if(self.grid[y+1][x-1] != MINE):
+                            self.grid[y+1][x-1] += 1
                     if(y > 0 and x < self.width - 1):
-                        self.grid[y-1][x+1] += 1
+                        if(self.grid[y-1][x+1] != MINE):
+                            self.grid[y-1][x+1] += 1
                     
 
 
     def print_grid(self):
-        for y in range(self.high):
-            print(self.grid[y])
+        for y in range(self.hight):
+            for x in range(self.width):
+                if(self.grid[y][x] >= 0):
+                    print(" " + str(self.grid[y][x]), end=" ")
+                else:
+                    print(self.grid[y][x], end=" ")
+            print()
 
 
     def open_cell(self, x, y):
@@ -57,7 +72,7 @@ class Grid():
             return MINE
         else:
             self.upper_grid[y][x] = OPEN
-            return 0
+            return self.grid[y][x]
         
 
     
@@ -65,7 +80,7 @@ class Grid():
 
 
 if __name__ == "__main__":
-    grid = Grid()
-    grid.random_grid(10, 10, 1)
+    grid = Grid(123)
+    grid.random_grid(30, 30, 200)
     grid.calculate_nums()
     grid.print_grid()

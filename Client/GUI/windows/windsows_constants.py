@@ -39,3 +39,14 @@ LOGIN_TXT_FONT = ("Calibri", 20)
 
 # Lobby -------------------------------------------------------------------------------------------------------------------------------------
 LOBBY_TITLE_TXT = "Lobby"
+
+
+YOUR_TURN_COLOR = "#00FF00"
+NOT_YOUR_TURN_COLOR = "#FF0000"
+
+GAME_SCREEN_WIDTH = 800
+GAME_SCREEN_HEIGHT = 900
+GAME_TITLE_HEIGHT = 1
+
+BUTTONS_HEIGHT = 1
+BUTTONS_WIDTH = 2
