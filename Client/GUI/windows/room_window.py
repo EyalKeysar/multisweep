@@ -4,10 +4,10 @@ from Client.GUI.windows.window import Window
 from Client.GUI.windows.windsows_constants import *
 
 MIN_MINES = 1
-MAX_MINES = 50
+MAX_MINES = 35
 
-MIN_SIZE = 10
-MAX_SIZE = 30
+MIN_SIZE = 5
+MAX_SIZE = 15
 
 class RoomWindow(Window):
     def __init__(self, parent, serverAPI):
@@ -16,6 +16,7 @@ class RoomWindow(Window):
         self.parent = parent
 
         self.need_update = True
+        self.game_started = False
 
         self.serverAPI = serverAPI
 
@@ -39,8 +40,8 @@ class RoomWindow(Window):
         self.goback_button.pack()
         self.num_of_mines_scale.pack()
         self.boardsize_scale.pack()
-        self.Listbox.pack()
         self.start_game_button.pack()
+        self.Listbox.pack()
 
         pass
 
@@ -56,7 +57,9 @@ class RoomWindow(Window):
         pass
 
     def start_game(self):
-        self.serverAPI.StartGame(self.num_of_mines_scale.get(), self.boardsize_scale.get())
+        if (self.serverAPI.SetGameSettings(self.num_of_mines_scale.get(), self.boardsize_scale.get())):
+            res = self.serverAPI.StartGame()
+
     
 
 

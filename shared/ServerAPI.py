@@ -145,3 +145,43 @@ class ServerAPI:
         
         except socket.timeout:
             return []
+        
+    def StartGame(self):
+        self.server_socket.send(START_GAME_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == START_GAME_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False
+        
+    def IsGameStarted(self):
+        print("IsGameStarted")
+        self.server_socket.send(IS_GAME_STARTED_REQ.encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == IS_GAME_STARTED_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False
+        
+    def GetGameChanges(self, num_of_changes=NUM_OF_CHANGES_EACH_PASS):
+        self.server_socket.send((GET_GAME_CHANGES + str(num_of_changes)).encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data.startswith(GET_GAME_CHANGES)):
+                return data[len(GET_GAME_CHANGES):].split(';')
+            else:
+                return []
+        
+        except socket.timeout:
+            return []

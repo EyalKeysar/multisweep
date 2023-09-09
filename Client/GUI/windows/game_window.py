@@ -2,13 +2,14 @@ import tkinter as tk
 
 from Client.GUI.windows.window import Window
 from Client.GUI.windows.windsows_constants import *
-
+from Client.GUI.Grid import *
 
 class GameWindow(Window):
-    def __init__(self, parent, grid_size):
+    def __init__(self, parent, serverAPI, grid_size):
         super().__init__(parent)
 
         self.parent = parent
+        self.serverAPI = serverAPI
 
         self.geometry(f"{GAME_SCREEN_WIDTH}x{GAME_SCREEN_HEIGHT}")
         self.title('game')
@@ -17,13 +18,17 @@ class GameWindow(Window):
 
         self.UpdateTurnIndicator()
 
+        size = serverAPI.GetGameSettings()[1]
+        self.grid = Grid(size)
 
         # Create grid of buttons
         self.buttons = []
         for y in range(grid_size):
             row = []
             for x in range(grid_size):
-                btn = tk.Button(self, text=" ", width=BUTTONS_WIDTH, height=BUTTONS_HEIGHT)
+                btn = tk.Button(self, 
+                                text=str(" " if self.grid.grid[y][x] == CLOSED_CELL else self.grid.grid[y][x]), 
+                                width=2, height=1)
                 btn.grid(row=y + 1, column=x)
                 btn.bind('<Button-1>', self.left_click)
                 btn.bind('<Button-3>', self.right_click)

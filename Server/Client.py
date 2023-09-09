@@ -9,6 +9,7 @@ class Client:
             "is_authenticated": False,
             "username": None
         }
+        self.game_changes = []
         print(f"Client {self.data} initialized")
 
     def IsAuthenticated(self):

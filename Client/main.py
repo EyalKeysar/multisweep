@@ -12,14 +12,14 @@ from shared.ServerAPI import ServerAPI
 
 def main():
 
-    # serverAPI = ServerAPI()
+    serverAPI = ServerAPI()
 
     root = TkHandler().root
     window_handler = WindowHandler(root)
-    # window_handler.ChangeWindow(MainWindow, window_handler, serverAPI)
-    window_handler.ChangeWindow(GameWindow, 30)
+    window_handler.ChangeWindow(MainWindow, window_handler, serverAPI)
+    # window_handler.ChangeWindow(GameWindow, 30)
 
-    # root.after(1000, periodic, root, window_handler, serverAPI)
+    root.after(1000, periodic, root, window_handler, serverAPI)
 
     root.mainloop()
 
@@ -29,6 +29,7 @@ def periodic(root, window_handler, serverAPI):
 
     auth_check(serverAPI, window_handler)
     select_room_check(serverAPI, window_handler)
+    start_game_check(serverAPI, window_handler)
 
     root.after(1000, periodic, root, window_handler, serverAPI)
 
@@ -55,6 +56,15 @@ def select_room_check(serverAPI, window_handler):
             window_handler.current_window.created_room = False
             window_handler.current_window.destroy()
             window_handler.ChangeWindow(RoomWindow, serverAPI)
+
+def start_game_check(serverAPI, window_handler):
+    if(serverAPI.is_authenticated 
+       and (type(window_handler.GetCurWindow()) == WaitingRoomWindow 
+            or type(window_handler.GetCurWindow()) == RoomWindow)):
+        if(serverAPI.IsGameStarted()):
+            print("game started")
+            window_handler.current_window.destroy()
+            window_handler.ChangeWindow(GameWindow, serverAPI, int(serverAPI.GetGameSettings()[1]))
 
             
 

@@ -144,6 +144,11 @@ class Server:
                         client_socket.send((GET_GAME_SETTINGS_RES + str(room.num_of_mines) + ';' + str(room.board_size)).encode())
                         print(f"GET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
             
+            elif(command == IS_GAME_STARTED_REQ):
+                if(client.IsAuthenticated()):
+                    client_socket.send(IS_GAME_STARTED_RES_FALSE.encode())
+                    print(f"IS_GAME_STARTED = no")
+
             elif(command == START_GAME_REQ):
                 if(client.IsAuthenticated()):
                     room = [room for room in self.rooms if client == room.host][0]
@@ -164,9 +169,43 @@ class Server:
         client.in_handle = False
 
     def handle_client_ingame(self, client, room):
-        is_host = client == room.host
-        
-        pass
+        is_host = (client == room.host)
+        if(is_host):
+            room.StartGame()
+
+        while True:
+            client_socket = client.GetSocket()
+            try:
+                data = client_socket.recv(1024).decode()
+                command = data[:6]
+                parameters = data[6:]
+            except socket.timeout:
+                continue
+
+            if(command == PING_REQ):
+                print("PING")
+                client_socket.send(PING_RES.encode())
+
+            elif(command == IS_GAME_STARTED_REQ):
+                client_socket.send(IS_GAME_STARTED_RES_TRUE.encode())
+                print(f"IS_GAME_STARTED true")
+
+            elif(command == GET_GAME_SETTINGS_REQ):
+                client_socket.send((GET_GAME_SETTINGS_RES + str(room.num_of_mines) + ';' + str(room.board_size)).encode())
+                print(f"GET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
+
+            elif(command == GET_GAME_CHANGES):
+                if(client in room):
+                    num_of_changes = int(parameters)
+                    if(num_of_changes > len(room.game_changes)):
+                        num_of_changes = len(room.game_changes)
+                    changes = room.game_changes[:num_of_changes]
+                    changes = ';'.join(changes)
+                    client_socket.send((GET_GAME_CHANGES + changes).encode())
+                    print(f"GET_GAME_CHANGES {changes}")
+
+            
+
 
 if(__name__ == "__main__"):
     server = Server().run()
