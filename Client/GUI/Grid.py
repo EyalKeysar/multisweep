@@ -11,5 +11,10 @@ class Grid:
 
     def apply_changes(self):
         for change in self.changes:
+            if(len(change) != 3):
+                print("Error: change is not in the right format: " + str(change))
+                continue
+            print(change)
             self.grid[change[1]][change[0]] = change[2]
-            self.changes.remove(change)
+            print("[" + str(change[0]) + ", " + str(change[1]) + "] = " + str(change[2]))
+        self.changes = []

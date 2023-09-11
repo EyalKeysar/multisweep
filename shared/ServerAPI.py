@@ -160,17 +160,18 @@ class ServerAPI:
             return False
         
     def IsGameStarted(self):
-        print("IsGameStarted")
         self.server_socket.send(IS_GAME_STARTED_REQ.encode())
         try:
             data = self.server_socket.recv(1024).decode()
             print(data)
             if(data == IS_GAME_STARTED_RES_TRUE):
+                print("IsGameStarted True")
                 return True
             else:
+                print("IsGameStarted False")
                 return False
         
-        except socket.timeout:
+        except socket.timeout:  
             return False
         
     def GetGameChanges(self, num_of_changes=NUM_OF_CHANGES_EACH_PASS):
@@ -179,9 +180,32 @@ class ServerAPI:
             data = self.server_socket.recv(1024).decode()
             print(data)
             if(data.startswith(GET_GAME_CHANGES)):
-                return data[len(GET_GAME_CHANGES):].split(';')
+                current = data[len(GET_GAME_CHANGES):].split(';')
+                changes_tuple_list = []
+                for change in current:
+                    if(len(change.split(',')) != 3):
+                        print("Error: change is not in the right format: " + str(change))
+                        continue
+
+                    changes_tuple_list.append(tuple(int(x) for x in change.split(','))) 
+                return changes_tuple_list
             else:
                 return []
         
         except socket.timeout:
             return []
+        
+    def OpenCell(self, x, y):
+        self.server_socket.send((OPEN_CELL_REQ + str(x) + ';' + str(y)).encode())
+        try:
+            data = self.server_socket.recv(1024).decode()
+            print(data)
+            if(data == OPEN_CELL_RES_TRUE):
+                return True
+            else:
+                return False
+        
+        except socket.timeout:
+            return False
+        
+

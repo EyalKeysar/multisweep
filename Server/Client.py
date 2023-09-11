@@ -3,6 +3,7 @@
 class Client:
     def __init__(self, client_socket, address) -> None:
         self.in_handle = False
+        self.in_game = False
         self.data = {
             "client_socket": client_socket,
             "address": address,

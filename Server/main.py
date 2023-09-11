@@ -38,7 +38,17 @@ class Server:
                     handle_thread.start()
 
     def HandleClient(self, client):
+        
+        if(client.in_game):
+            room = [room for room in self.rooms if client in room.clients][0]
+            if(room == None):
+                print("HandleClient: client in game but not in room")
+                return
+            self.handle_client_ingame(client, room)
+            return
+
         client_socket = client.GetSocket()
+        
         try:
             data = client_socket.recv(1024).decode()
             command = data[:6]
@@ -146,8 +156,18 @@ class Server:
             
             elif(command == IS_GAME_STARTED_REQ):
                 if(client.IsAuthenticated()):
-                    client_socket.send(IS_GAME_STARTED_RES_FALSE.encode())
-                    print(f"IS_GAME_STARTED = no")
+                    room = [room for room in self.rooms if client in room.clients][0]
+                    if(room == None):
+                        client_socket.send(IS_GAME_STARTED_RES_FALSE.encode())
+                        print(f"IS_GAME_STARTED = no (no room too)")
+                    else:
+                        if(room.game_started):
+                            client_socket.send(IS_GAME_STARTED_RES_TRUE.encode())
+                            print(f"IS_GAME_STARTED = yes")
+                        else:
+                            client_socket.send(IS_GAME_STARTED_RES_FALSE.encode())
+                            print(f"IS_GAME_STARTED = no (in room)")
+                            print(str(room.clients))
 
             elif(command == START_GAME_REQ):
                 if(client.IsAuthenticated()):
@@ -158,6 +178,8 @@ class Server:
                     else:
                         client_socket.send(START_GAME_RES_TRUE.encode())
                         print(f"START_GAME success")
+                        for cur_client in room.clients:
+                            cur_client.in_game = True
                         self.handle_client_ingame(client, room)
 
 
@@ -169,6 +191,7 @@ class Server:
         client.in_handle = False
 
     def handle_client_ingame(self, client, room):
+        print("handle_client_ingame")
         is_host = (client == room.host)
         if(is_host):
             room.StartGame()
@@ -195,16 +218,43 @@ class Server:
                 print(f"GET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
 
             elif(command == GET_GAME_CHANGES):
-                if(client in room):
+                if(client in room.clients):
                     num_of_changes = int(parameters)
-                    if(num_of_changes > len(room.game_changes)):
-                        num_of_changes = len(room.game_changes)
-                    changes = room.game_changes[:num_of_changes]
-                    changes = ';'.join(changes)
-                    client_socket.send((GET_GAME_CHANGES + changes).encode())
-                    print(f"GET_GAME_CHANGES {changes}")
+                    if(num_of_changes > len(client.game_changes)):
+                        num_of_changes = len(client.game_changes)
+                    changes = client.game_changes[:num_of_changes]
+                    respond = ""
+                    for change in changes:
+                        respond += str(change[0]) + ',' + str(change[1]) + ',' + str(change[2]) + ';'
+                    print(f"GET_GAME_CHANGES {str(respond)}")
+                    client_socket.send((GET_GAME_CHANGES + respond).encode())
+                    print(f"GET_GAME_CHANGES {respond}")
 
+            elif(command == GET_HOST_USERNAME_REQ):
+                if(client.IsAuthenticated()):
+                    host_username = room.host.GetUsername()
+                    client_socket.send((GET_HOST_USERNAME_RES + host_username).encode())
+                    print(f"GET_HOST_USERNAME {host_username}")
             
+            elif(command == OPEN_CELL_REQ):
+                if(client.IsAuthenticated()):
+                    if(room.MyTurn(client)):
+                        x, y = parameters.split(';')
+                        x = int(x)
+                        y = int(y)
+                        res = room.OpenCell(x, y)
+                        if(res):
+                            client_socket.send(OPEN_CELL_RES_TRUE.encode())
+                            print(f"OPEN_CELL {x} {y} success")
+                        else:
+                            client_socket.send(OPEN_CELL_RES_FALSE.encode())
+                            print(f"OPEN_CELL {x} {y} failed")
+                    else:
+                        print("OPEN_CELL not your turn")
+                        client_socket.send(OPEN_CELL_RES_FALSE.encode())
+                else:
+                    print("OPEN_CELL not authenticated")
+                    client_socket.send(OPEN_CELL_RES_FALSE.encode())
 
 
 if(__name__ == "__main__"):

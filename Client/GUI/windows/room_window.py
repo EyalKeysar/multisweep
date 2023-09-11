@@ -31,7 +31,7 @@ class RoomWindow(Window):
         self.num_of_mines_scale = tk.Scale(self, from_=MIN_MINES, to=MAX_MINES, orient=tk.HORIZONTAL, length=int(SCREEN_WIDTH / 2), label="number of mines") 
         self.boardsize_scale = tk.Scale(self, from_=MIN_SIZE, to=MAX_SIZE, orient=tk.HORIZONTAL, length=int(SCREEN_WIDTH / 2), label="grid size")
 
-        self.Listbox = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
+        self.players_list = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
         self.get_players_in_my_room()
 
         self.start_game_button = tk.Button(self, text="Start Game", command=self.start_game)
@@ -41,16 +41,16 @@ class RoomWindow(Window):
         self.num_of_mines_scale.pack()
         self.boardsize_scale.pack()
         self.start_game_button.pack()
-        self.Listbox.pack()
+        self.players_list.pack()
 
         pass
 
     def get_players_in_my_room(self):
-        self.Listbox.delete(0, 'end')
-        for player in self.serverAPI.GetUsersInMyRoom():
-            self.Listbox.insert(tk.END, str(player))
-
         if(self.need_update):
+            self.players_list.delete(0, 'end')
+            for player in self.serverAPI.GetUsersInMyRoom():
+                self.players_list.insert(tk.END, str(player))
+
             self.parent.after(1000, self.get_players_in_my_room)
 
     def GoBack(self):
@@ -58,7 +58,8 @@ class RoomWindow(Window):
 
     def start_game(self):
         if (self.serverAPI.SetGameSettings(self.num_of_mines_scale.get(), self.boardsize_scale.get())):
-            res = self.serverAPI.StartGame()
+            self.serverAPI.StartGame()
+            
 
     
 

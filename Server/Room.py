@@ -7,6 +7,8 @@ class Room:
         self.name = host.GetUsername()
         self.clients = [host]
 
+        self.game_started = False
+
         self.grid = None
 
         self.turn = 0
@@ -16,6 +18,7 @@ class Room:
         
     def StartGame(self):
         self.grid = Grid(self.board_size, self.board_size, self.num_of_mines)
+        self.game_started = True
         self.turn = 0
 
     def DoTurn(self):
@@ -41,8 +44,9 @@ class Room:
         return self.turn
     
     def OpenCell(self, x, y):
-        self.grid.OpenCell(x, y)
+        res = self.grid.open_cell(x, y)
 
         cur_changes = self.grid.collect_changes()
         for client in self.clients:
             client.game_changes.extend(cur_changes)
+        return res

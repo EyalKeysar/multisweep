@@ -60,6 +60,9 @@ class LobbyWindow(Window):
     def check_selected(self):
         if(self.room_selection.curselection()):
             self.selected_room = self.room_selection.get(self.room_selection.curselection())
+            if(self.selected_room == "" or self.selected_room == None):
+                self.selected_room = None
+                return False
             self.need_update = False
             return True
         else:

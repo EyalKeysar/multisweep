@@ -63,8 +63,11 @@ def start_game_check(serverAPI, window_handler):
             or type(window_handler.GetCurWindow()) == RoomWindow)):
         if(serverAPI.IsGameStarted()):
             print("game started")
-            window_handler.current_window.destroy()
+            window_handler.current_window.need_update = False
+            print("game started on client changing window")
             window_handler.ChangeWindow(GameWindow, serverAPI, int(serverAPI.GetGameSettings()[1]))
+
+    
 
             
 

@@ -97,7 +97,7 @@ class Grid():
     def open_recursive(self, x, y):
         if self.grid[y][x] == EMPTY and self.upper_grid[y][x] != OPEN:
             self.upper_grid[y][x] = OPEN
-            self.changes.append((x, y))
+            self.changes.append((x, y, self.grid[y][x]))
             if(y < self.hight - 1):
                 self.open_recursive(x, y+1)
             if(y > 0):
@@ -117,7 +117,7 @@ class Grid():
                 self.open_recursive(x+1, y-1)
         elif(self.upper_grid[y][x] != OPEN):
             self.upper_grid[y][x] = OPEN
-            self.changes.append((x, y))
+            self.changes.append((x, y, self.grid[y][x]))
         
 
     
