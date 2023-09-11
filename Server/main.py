@@ -222,7 +222,7 @@ class Server:
                     num_of_changes = int(parameters)
                     if(num_of_changes > len(client.game_changes)):
                         num_of_changes = len(client.game_changes)
-                    changes = client.game_changes[:num_of_changes]
+                    changes = client.GetAndFlushChanges(num_of_changes)
                     respond = ""
                     for change in changes:
                         respond += str(change[0]) + ',' + str(change[1]) + ',' + str(change[2]) + ';'

@@ -63,7 +63,7 @@ class GameWindow(Window):
         button_info = clicked_button.grid_info()
         row, column = button_info['row'], button_info['column']
         print(f"Button clicked at (row={row}, column={column})")
-        self.serverAPI.OpenCell(row, column)
+        self.serverAPI.OpenCell(column, row)
 
     def right_click(self, event):
         pass

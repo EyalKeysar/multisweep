@@ -39,3 +39,9 @@ class Client:
     
     def GetClientData(self):
         return self.data
+    
+    def GetAndFlushChanges(self, num_of_changes):
+        ret = self.game_changes[:num_of_changes]
+        self.game_changes = self.game_changes[num_of_changes:]
+        return ret
+        
