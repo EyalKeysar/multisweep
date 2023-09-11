@@ -54,7 +54,7 @@ class GameWindow(Window):
                                             state=tk.DISABLED if self.grid.grid[y][x] != CLOSED_CELL else tk.NORMAL)
         if(self.game_running):
             print("Updating grid")
-            self.parent.after(1000, self.UpdateGrid)
+            self.parent.after(100, self.UpdateGrid)
 
 
 

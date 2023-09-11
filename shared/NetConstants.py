@@ -48,7 +48,7 @@ IS_GAME_STARTED_RES_FALSE = "IGSFLS"
 
 
 GET_GAME_CHANGES = "GGCREQ" # Get game changes request
-NUM_OF_CHANGES_EACH_PASS = 3
+NUM_OF_CHANGES_EACH_PASS = 100 # Number of changes to send each pass
 
 OPEN_CELL_REQ = "OPCREQ" # Open cell request
 OPEN_CELL_RES_TRUE = "OPCTRE"
