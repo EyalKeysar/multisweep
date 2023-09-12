@@ -21,10 +21,6 @@ class Room:
         self.game_started = True
         self.turn = 0
 
-    def DoTurn(self):
-        self.turn = (self.turn + 1) % len(self.clients)
-        return self.turn
-
     def AddClient(self, client):
         self.clients.append(client)
         return True

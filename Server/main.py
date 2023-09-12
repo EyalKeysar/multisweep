@@ -159,7 +159,6 @@ class Server:
                     room = [room for room in self.rooms if client in room.clients][0]
                     if(room == None):
                         client_socket.send(IS_GAME_STARTED_RES_FALSE.encode())
-                        print(f"IS_GAME_STARTED = no (no room too)")
                     else:
                         if(room.game_started):
                             client_socket.send(IS_GAME_STARTED_RES_TRUE.encode())
@@ -226,9 +225,7 @@ class Server:
                     respond = ""
                     for change in changes:
                         respond += str(change[0]) + ',' + str(change[1]) + ',' + str(change[2]) + ';'
-                    print(f"GET_GAME_CHANGES {str(respond)}")
                     client_socket.send((GET_GAME_CHANGES + respond).encode())
-                    print(f"GET_GAME_CHANGES {respond}")
 
             elif(command == GET_HOST_USERNAME_REQ):
                 if(client.IsAuthenticated()):
@@ -239,6 +236,7 @@ class Server:
             elif(command == OPEN_CELL_REQ):
                 if(client.IsAuthenticated()):
                     if(room.MyTurn(client)):
+                        
                         x, y = parameters.split(';')
                         x = int(x)
                         y = int(y)
@@ -249,6 +247,7 @@ class Server:
                         else:
                             client_socket.send(OPEN_CELL_RES_FALSE.encode())
                             print(f"OPEN_CELL {x} {y} failed")
+                        room.NextTurn()
                     else:
                         print("OPEN_CELL not your turn")
                         client_socket.send(OPEN_CELL_RES_FALSE.encode())

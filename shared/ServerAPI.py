@@ -184,10 +184,10 @@ class ServerAPI:
                 changes_tuple_list = []
                 for change in current:
                     if(len(change.split(',')) != 3):
-                        print("Error: change is not in the right format: " + str(change))
+                        # Format of a change is: x,y,value
                         continue
-
                     changes_tuple_list.append(tuple(int(x) for x in change.split(','))) 
+
                 return changes_tuple_list
             else:
                 return []

@@ -50,3 +50,19 @@ GAME_TITLE_HEIGHT = 1
 
 BUTTONS_HEIGHT = 1
 BUTTONS_WIDTH = 2
+
+GAME_BUTTON_FONT='sans 16 bold'
+
+DIGITS = [1, 2, 3, 4, 5, 6, 7, 8]
+
+DIGIT_TO_COLOR = {
+    -1: "#FFFFFF",
+    1: "#0000FF",
+    2: "#00FF00",
+    3: "#FF0000",
+    4: "#000080",
+    5: "#800000",
+    6: "#008080",
+    7: "#000000",
+    8: "#808080"
+}

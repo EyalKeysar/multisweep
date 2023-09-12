@@ -46,7 +46,6 @@ class LobbyWindow(Window):
     def get_available_rooms(self):
         if(self.check_selected()):
             return
-        
 
         self.room_selection.delete(0, 'end')
 
