@@ -10,7 +10,7 @@ from shared.NetConstants import *
 
 
 class Server:
-    def __init__(self) -> None:
+    def __init__(self):
         print("Server init")
 
         self.net_handler = ServerNetHandler()
