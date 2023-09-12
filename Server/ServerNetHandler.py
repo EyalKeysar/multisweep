@@ -4,9 +4,9 @@ from shared.NetConstants import *
 from Server.Client import Client
 
 class ServerNetHandler:
-    def __init__(self, ip=IP, port=PORT):
+    def __init__(self, port=SERVER_PORT):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind(('', port))
+        self.server_socket.bind(('0.0.0.0', port))
         self.server_socket.listen(5)
         self.in_AcceptClient = False
 
