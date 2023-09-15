@@ -7,6 +7,9 @@ from Client.GUI.windows.lobby_window import LobbyWindow
 from Client.GUI.windows.room_window import RoomWindow
 from Client.GUI.windows.waiting_room_window import WaitingRoomWindow
 from Client.GUI.windows.game_window import GameWindow
+from Client.GUI.windows.win_window import WinWindow
+from Client.GUI.windows.lose_window import LoseWindow
+
 from shared.ServerAPI import ServerAPI
 
 
@@ -30,6 +33,7 @@ def periodic(root, window_handler, serverAPI):
     auth_check(serverAPI, window_handler)
     select_room_check(serverAPI, window_handler)
     start_game_check(serverAPI, window_handler)
+    win_condition_check(serverAPI, window_handler)
 
     root.after(1000, periodic, root, window_handler, serverAPI)
 
@@ -66,6 +70,15 @@ def start_game_check(serverAPI, window_handler):
             window_handler.current_window.need_update = False
             print("game started on client changing window")
             window_handler.ChangeWindow(GameWindow, serverAPI, int(serverAPI.GetGameSettings()[1]))
+
+def win_condition_check(serverAPI, window_handler):
+    if(type(window_handler.GetCurWindow()) == GameWindow):
+        if(window_handler.current_window.game_res == True):
+            window_handler.current_window.destroy()
+            window_handler.ChangeWindow(WinWindow, window_handler)
+        elif(window_handler.current_window.game_res == False):
+            window_handler.current_window.destroy()
+            window_handler.ChangeWindow(LoseWindow, window_handler)
 
     
 

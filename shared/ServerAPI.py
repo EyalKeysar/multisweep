@@ -190,6 +190,8 @@ class ServerAPI:
 
                 return changes_tuple_list
             else:
+                if(data.startswith(GAMEFINISHED)):
+                    return GAMEFINISHED
                 return []
         
         except socket.timeout:
@@ -201,9 +203,13 @@ class ServerAPI:
             data = self.server_socket.recv(1024).decode()
             print(data)
             if(data == OPEN_CELL_RES_TRUE):
+                return None
+            elif(data == GAMELOST):
+                return False
+            elif(data == GAMEWON):
                 return True
             else:
-                return False
+                return None
         
         except socket.timeout:
             return False

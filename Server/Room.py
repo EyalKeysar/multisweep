@@ -45,4 +45,12 @@ class Room:
         cur_changes = self.grid.collect_changes()
         for client in self.clients:
             client.game_changes.extend(cur_changes)
-        return res
+
+        wc = self.grid.win_condition()
+        lc = self.grid.lose_condition()
+        if(lc):
+            return res, False
+        elif(wc):
+            return res, True
+        else:
+            return res, None

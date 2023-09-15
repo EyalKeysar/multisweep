@@ -88,11 +88,8 @@ class Grid():
             print()
 
     def open_cell(self, x, y):
-        if self.grid[y][x] == MINE:
-            return MINE
-        else:
-            self.open_recursive(x, y)
-            return True
+        self.open_recursive(x, y)
+        return True
         
     def open_recursive(self, x, y):
         if self.grid[y][x] == EMPTY and self.upper_grid[y][x] != OPEN:
@@ -119,7 +116,20 @@ class Grid():
             self.upper_grid[y][x] = OPEN
             self.changes.append((x, y, self.grid[y][x]))
         
-
+    def win_condition(self):
+        for y in range(self.hight):
+            for x in range(self.width):
+                if(self.grid[y][x] != MINE and self.upper_grid[y][x] != OPEN):
+                    return False
+        return True
+    
+    def lose_condition(self):
+        for y in range(self.hight):
+            for x in range(self.width):
+                if(self.grid[y][x] == MINE and self.upper_grid[y][x] == OPEN):
+                    return True
+        return False
+        
     
 
 

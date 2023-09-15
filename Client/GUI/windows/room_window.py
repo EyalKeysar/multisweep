@@ -3,11 +3,11 @@ import tkinter as tk
 from Client.GUI.windows.window import Window
 from Client.GUI.windows.windsows_constants import *
 
+MIN_SIZE = 8
+MAX_SIZE = 15
+
 MIN_MINES = 1
 MAX_MINES = 35
-
-MIN_SIZE = 5
-MAX_SIZE = 15
 
 class RoomWindow(Window):
     def __init__(self, parent, serverAPI):

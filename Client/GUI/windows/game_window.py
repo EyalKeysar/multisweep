@@ -12,6 +12,7 @@ class GameWindow(Window):
         self.serverAPI = serverAPI
 
         self.game_running = True
+        self.game_res = None
 
         self.geometry(f"{GAME_SCREEN_WIDTH}x{GAME_SCREEN_HEIGHT}")
         self.title('game')
@@ -82,7 +83,22 @@ class GameWindow(Window):
         button_info = clicked_button.grid_info()
         row, column = button_info['row'], button_info['column']
         print(f"Button clicked at (row={row}, column={column})")
-        self.serverAPI.OpenCell(column, row)
+        res = self.serverAPI.OpenCell(column, row)
+        
+        # win condition
+        
+        if(res == None):
+            pass
+        elif(res == False):
+            self.game_running = False
+            self.game_res = False
+            print("Game Lost")
+
+        elif(res == True):
+            self.game_running = False
+            self.game_res = True
+            print("Game Won")
+        
 
     def right_click(self, event):
         # Get Button and flag it

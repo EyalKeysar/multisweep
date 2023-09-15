@@ -53,3 +53,8 @@ NUM_OF_CHANGES_EACH_PASS = 100 # Number of changes to send each pass
 OPEN_CELL_REQ = "OPCREQ" # Open cell request
 OPEN_CELL_RES_TRUE = "OPCTRE"
 OPEN_CELL_RES_FALSE = "OPCFLS"
+
+GAMELOST = "GLSTED" # Game lost
+GAMEWON = "GAWNED" # Game won 
+
+GAMEFINISHED = "GAFIED" # Game finished
