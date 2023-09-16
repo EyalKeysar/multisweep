@@ -4,6 +4,8 @@ from Client.GUI.windows.window import Window
 from Client.GUI.windows.windsows_constants import *
 from Client.GUI.Grid import *
 
+from shared.NetConstants import *
+
 class GameWindow(Window):
     def __init__(self, parent, serverAPI, grid_size):
         super().__init__(parent)
@@ -47,6 +49,16 @@ class GameWindow(Window):
             pass
         else:
             for change in gcngs:
+                if(change[0] == GAMELOST):
+                    self.game_running = False
+                    self.game_res = False
+                    print("Game Lost")
+                    break
+                elif(change[0] == GAMEWON):
+                    self.game_running = False
+                    self.game_res = True
+                    print("Game Won")
+                    break
                 self.grid.changes.append(change)
 
             self.grid.apply_changes()

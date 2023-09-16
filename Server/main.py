@@ -241,26 +241,15 @@ class Server:
                         x, y = parameters.split(';')
                         x = int(x)
                         y = int(y)
-                        res, wlc = room.OpenCell(x, y)
-                        if(wlc == None):
-                            if(res):
-                                client_socket.send(OPEN_CELL_RES_TRUE.encode())
-                                print(f"OPEN_CELL {x} {y} success")
-                            else:
-                                client_socket.send(OPEN_CELL_RES_FALSE.encode())
-                                print(f"OPEN_CELL {x} {y} failed")
-                            room.NextTurn()
-                        elif(wlc == False):
-                            print("lost, mine opend")
-                            client_socket.send(GAMELOST.encode())
-                        
-                        elif(wlc == True):
-                            print("won")
-                            client_socket.send(GAMEWON.encode())
-                            room.NextTurn()
-                            
+                        res = room.OpenCell(x, y)
+                        if(res):
+                            client_socket.send(OPEN_CELL_RES_TRUE.encode())
+                            print(f"OPEN_CELL {x} {y} success")
                         else:
-                            pass
+                            client_socket.send(OPEN_CELL_RES_FALSE.encode())
+                            print(f"OPEN_CELL {x} {y} failed")
+                        room.NextTurn()
+                        
 
                     else:
                         print("OPEN_CELL not your turn")

@@ -186,6 +186,9 @@ class ServerAPI:
                     if(len(change.split(',')) != 3):
                         # Format of a change is: x,y,value
                         continue
+                    if(change.split(',')[0] == GAMELOST or change.split(',')[0] == GAMEWON):
+                        changes_tuple_list.append(change.split(','))
+                        return changes_tuple_list
                     changes_tuple_list.append(tuple(int(x) for x in change.split(','))) 
 
                 return changes_tuple_list

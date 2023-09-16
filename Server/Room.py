@@ -1,5 +1,6 @@
 from Server.Client import Client
 from Server.Logic.Grid import Grid
+from shared.NetConstants import *
 
 class Room:
     def __init__(self, host):
@@ -10,6 +11,10 @@ class Room:
         self.game_started = False
 
         self.grid = None
+
+        self.lost = False
+        self.won = False
+
 
         self.turn = 0
 
@@ -40,6 +45,7 @@ class Room:
         return self.turn
     
     def OpenCell(self, x, y):
+
         res = self.grid.open_cell(x, y)
 
         cur_changes = self.grid.collect_changes()
@@ -49,8 +55,12 @@ class Room:
         wc = self.grid.win_condition()
         lc = self.grid.lose_condition()
         if(lc):
-            return res, False
+            for client in self.clients:
+                client.game_changes.append((GAMELOST, 0, 0))
+            return res
         elif(wc):
-            return res, True
+            for client in self.clients:
+                client.game_changes.append((GAMEWON, 0, 0))
+            return res
         else:
-            return res, None
+            return res
