@@ -187,14 +187,13 @@ class ServerAPI:
                         # Format of a change is: x,y,value
                         continue
                     if(change.split(',')[0] == GAMELOST or change.split(',')[0] == GAMEWON):
+                        print("---" + str(change))
                         changes_tuple_list.append(change.split(','))
                         return changes_tuple_list
                     changes_tuple_list.append(tuple(int(x) for x in change.split(','))) 
 
                 return changes_tuple_list
             else:
-                if(data.startswith(GAMEFINISHED)):
-                    return GAMEFINISHED
                 return []
         
         except socket.timeout:
@@ -204,16 +203,6 @@ class ServerAPI:
         self.server_socket.send((OPEN_CELL_REQ + str(x) + ';' + str(y)).encode())
         try:
             data = self.server_socket.recv(1024).decode()
-            print(data)
-            if(data == OPEN_CELL_RES_TRUE):
-                return None
-            elif(data == GAMELOST):
-                return False
-            elif(data == GAMEWON):
-                return True
-            else:
-                return None
-        
         except socket.timeout:
             return False
         

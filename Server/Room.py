@@ -55,10 +55,12 @@ class Room:
         wc = self.grid.win_condition()
         lc = self.grid.lose_condition()
         if(lc):
+            self.lost = True
             for client in self.clients:
                 client.game_changes.append((GAMELOST, 0, 0))
             return res
         elif(wc):
+            self.won = True
             for client in self.clients:
                 client.game_changes.append((GAMEWON, 0, 0))
             return res

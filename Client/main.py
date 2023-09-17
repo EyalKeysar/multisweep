@@ -75,10 +75,10 @@ def win_condition_check(serverAPI, window_handler):
     if(type(window_handler.GetCurWindow()) == GameWindow):
         if(window_handler.current_window.game_res == True):
             window_handler.current_window.destroy()
-            window_handler.ChangeWindow(WinWindow, window_handler)
+            window_handler.ChangeWindow(WinWindow, window_handler, serverAPI)
         elif(window_handler.current_window.game_res == False):
             window_handler.current_window.destroy()
-            window_handler.ChangeWindow(LoseWindow, window_handler)
+            window_handler.ChangeWindow(LoseWindow, window_handler, serverAPI)
 
     
 

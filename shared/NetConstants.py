@@ -56,5 +56,3 @@ OPEN_CELL_RES_FALSE = "OPCFLS"
 
 GAMELOST = "GLSTED" # Game lost
 GAMEWON = "GAWNED" # Game won 
-
-GAMEFINISHED = "GAFIED" # Game finished

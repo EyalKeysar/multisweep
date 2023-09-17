@@ -7,9 +7,10 @@ from Client.GUI.windows.lobby_window import LobbyWindow
 
 class WinWindow(Window):
 
-    def __init__(self, parent, window_handler):
+    def __init__(self, parent, window_handler, serverAPI):
         super().__init__(parent)
 
+        self.serverAPI = serverAPI
         self.parent = parent
         self.window_handler = window_handler
 
@@ -25,4 +26,4 @@ class WinWindow(Window):
         self.goback_button.pack()
 
     def GoBack(self):
-        self.window_handler.ChangeWindow(LobbyWindow, self.parent.serverAPI)
+        self.window_handler.ChangeWindow(LobbyWindow, self.serverAPI)

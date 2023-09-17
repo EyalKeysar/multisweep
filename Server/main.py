@@ -180,6 +180,15 @@ class Server:
                         for cur_client in room.clients:
                             cur_client.in_game = True
                         self.handle_client_ingame(client, room)
+            elif(command == GET_GAME_CHANGES):
+                num_of_changes = int(parameters)
+                if(num_of_changes > len(client.game_changes)):
+                    num_of_changes = len(client.game_changes)
+                changes = client.GetAndFlushChanges(num_of_changes)
+                respond = ""
+                for change in changes:
+                    respond += str(change[0]) + ',' + str(change[1]) + ',' + str(change[2]) + ';'
+                client_socket.send((GET_GAME_CHANGES + respond).encode())
 
 
             else:
@@ -196,6 +205,19 @@ class Server:
             room.StartGame()
 
         while True:
+
+            if((room.won or room.lost) and is_host):
+                for client in room.clients:
+                    client.in_game = False
+                self.rooms.remove(room)
+                print("WWWWWWWWWWWW")
+                return
+            elif(room.won or room.lost):
+                client.in_game = False
+                room.clients.remove(client)
+                print("WWWWWWWWWWWWWWWWWWWW")
+                return
+
             client_socket = client.GetSocket()
             try:
                 data = client_socket.recv(1024).decode()
@@ -249,7 +271,6 @@ class Server:
                             client_socket.send(OPEN_CELL_RES_FALSE.encode())
                             print(f"OPEN_CELL {x} {y} failed")
                         room.NextTurn()
-                        
 
                     else:
                         print("OPEN_CELL not your turn")
@@ -257,6 +278,9 @@ class Server:
                 else:
                     print("OPEN_CELL not authenticated")
                     client_socket.send(OPEN_CELL_RES_FALSE.encode())
+
+            else:
+                print("!$!$!$! UNKNOWN  " + str(data))
 
 
 if(__name__ == "__main__"):

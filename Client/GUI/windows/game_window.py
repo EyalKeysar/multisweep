@@ -10,6 +10,8 @@ class GameWindow(Window):
     def __init__(self, parent, serverAPI, grid_size):
         super().__init__(parent)
 
+        self.in_update = False
+
         self.parent = parent
         self.serverAPI = serverAPI
 
@@ -29,10 +31,15 @@ class GameWindow(Window):
         for y in range(grid_size):
             row = []
             for x in range(grid_size):
-                btn = tk.Button(self, 
+                
+                if((x, y) in self.flags):
+                    btn = tk.Button(self, text="F", width=2, height=1, font=GAME_BUTTON_FONT)
+                else:
+                    btn = tk.Button(self, 
                                 text=str(" " if self.grid.grid[y][x] == CLOSED_CELL else self.grid.grid[y][x]), 
                                 width=2, height=1, font=GAME_BUTTON_FONT,
                                 state=tk.DISABLED if self.grid.grid[y][x] != CLOSED_CELL else tk.NORMAL)
+
                 btn.grid(row=y, column=x)
                 btn.bind('<Button-1>', self.left_click)
                 btn.bind('<Button-3>', self.right_click)
@@ -43,6 +50,9 @@ class GameWindow(Window):
 
 
     def UpdateGrid(self):
+        if(self.in_update):
+            self.parent.after(100, self.UpdateGrid)
+        self.in_update = True
         gcngs = self.serverAPI.GetGameChanges()
 
         if(gcngs == []):
@@ -50,43 +60,36 @@ class GameWindow(Window):
         else:
             for change in gcngs:
                 if(change[0] == GAMELOST):
+                    print(change)
                     self.game_running = False
                     self.game_res = False
                     print("Game Lost")
-                    break
+                    return
                 elif(change[0] == GAMEWON):
                     self.game_running = False
                     self.game_res = True
                     print("Game Won")
-                    break
+                    return
                 self.grid.changes.append(change)
 
             self.grid.apply_changes()
             for y in range(len(self.grid.grid)):
                 for x in range(len(self.grid.grid)):
-                    self.buttons[y][x].config(text=str(" " if self.grid.grid[y][x] == CLOSED_CELL else str(self.grid.grid[y][x])),
-                                            state=tk.DISABLED if self.grid.grid[y][x] != CLOSED_CELL else tk.NORMAL)
+                    if((x, y) in self.flags):
+                        self.buttons[y][x].config(text="F")
+                    else:
+                        self.buttons[y][x].config(text=str(" " if self.grid.grid[y][x] == CLOSED_CELL else str(self.grid.grid[y][x])),
+                                                state=tk.DISABLED if self.grid.grid[y][x] != CLOSED_CELL else tk.NORMAL)
+                    
+
                     if(self.grid.grid[y][x] in DIGITS):
                         color = DIGIT_TO_COLOR[self.grid.grid[y][x]]
                         self.buttons[y][x].config(bg=color)
                     
-        self.UpdateForFlags()
+        self.in_update = False
+
         if(self.game_running):
             self.parent.after(100, self.UpdateGrid)
-
-    def UpdateForFlags(self):
-        for y in range(len(self.grid.grid)):
-            for x in range(len(self.grid.grid)):
-                if((x, y) in self.flags):
-                    self.buttons[y][x].config(text="F")
-                elif(self.grid.grid[y][x] in DIGITS):
-                    color = DIGIT_TO_COLOR[self.grid.grid[y][x]]
-                    self.buttons[y][x].config(text=str(self.grid.grid[y][x]),
-                                            bg=color)
-                elif(self.grid.grid[y][x] == 0):
-                    self.buttons[y][x].config(text="0")
-                else:
-                    self.buttons[y][x].config(text=" ")
 
 
 
@@ -95,21 +98,11 @@ class GameWindow(Window):
         button_info = clicked_button.grid_info()
         row, column = button_info['row'], button_info['column']
         print(f"Button clicked at (row={row}, column={column})")
-        res = self.serverAPI.OpenCell(column, row)
-        
-        # win condition
-        
-        if(res == None):
-            pass
-        elif(res == False):
-            self.game_running = False
-            self.game_res = False
-            print("Game Lost")
 
-        elif(res == True):
-            self.game_running = False
-            self.game_res = True
-            print("Game Won")
+        if((column, row) in self.flags):
+            return
+
+        res = self.serverAPI.OpenCell(column, row)
         
 
     def right_click(self, event):
@@ -119,8 +112,10 @@ class GameWindow(Window):
         row, column = button_info['row'], button_info['column']
         print(f"Flag Placed at (row={row}, column={column})")
         if((column, row) in self.flags):
+            self.buttons[row][column].config(text=" ")
             self.flags.remove((column, row))
         else:
+            self.buttons[row][column].config(text="F")
             self.flags.append((column, row))
 
     def UpdateTurnIndicator(self):
