@@ -22,6 +22,11 @@ class Server:
 
     def run(self):
         while True:
+
+            for room in self.rooms:
+                if(room.clients == []):
+                    self.rooms.remove(room)
+
             if(not self.net_handler.in_AcceptClient):
                 # Accept client
                 print("Starting accept thread the in accept client is" + str(self.net_handler.in_AcceptClient))
@@ -38,7 +43,6 @@ class Server:
                     handle_thread.start()
 
     def HandleClient(self, client):
-        
         if(client.in_game):
             room = [room for room in self.rooms if client in room.clients][0]
             if(room == None):
@@ -89,13 +93,20 @@ class Server:
 
             elif(command == GET_AVAILABLE_ROOMS_REQ):
                 if(client.IsAuthenticated()):
-                    rooms_names = [room.name for room in self.rooms]
+                    rooms_names = []
+                    for room in self.rooms:
+                        if(not room.game_started):
+                            rooms_names.append(room.name)
                     rooms_names = ';'.join(rooms_names)
                     client_socket.send((GET_AVAILABLE_ROOMS_RES + rooms_names).encode())
-                    print(f"GET_AVAILABLE_USERS {rooms_names}")
+                    print(f"GET_AVAILABLE_ROOMS {rooms_names}")
 
             elif(command == ADD_ROOM_REQ):
                 if(client.IsAuthenticated()):
+                    client.game_changes = []
+                    for room in self.rooms:
+                        if(client in room.clients):
+                            room.clients.remove(client)
                     room = Room(client)
                     self.rooms.append(room)
                     client_socket.send(ADD_ROOM_RES_TRUE.encode())
@@ -103,6 +114,12 @@ class Server:
 
             elif(command == JOIN_ROOM_REQ):
                 if(client.IsAuthenticated()):
+                    client.game_changes = []
+                    for room in self.rooms:
+                        if(client in room.clients):
+                            room.clients.remove(client)
+
+
                     room_name = parameters
                     room = [room for room in self.rooms if room.name == room_name][0]
                     res = room.AddClient(client)
@@ -180,6 +197,7 @@ class Server:
                     else:
                         client_socket.send(START_GAME_RES_TRUE.encode())
                         print(f"START_GAME success")
+                        room.game_started = True
                         for cur_client in room.clients:
                             cur_client.in_game = True
                         self.handle_client_ingame(client, room)
