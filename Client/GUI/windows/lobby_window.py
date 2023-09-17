@@ -22,13 +22,9 @@ class LobbyWindow(Window):
         self.resizable(False, False)
 
 
-        self.connection_status_label = tk.Label(self, text="Disconnected", bg="#FF0000", width=SCREEN_WIDTH, height=CONNECTION_STATUS_BAR_HEIGHT)
         self.title_label = tk.Label(self, text = LOBBY_TITLE_TXT, bg = TITLE_BG_CLR, width=SCREEN_WIDTH, height=SIGN_IN_TITLE_HEIGHT, font = TITLE_TXT_FONT)
 
-        self.connection_status_label.pack()
         self.title_label.pack()
-
-
 
         self.room_selection = tk.Listbox(self, width=SCREEN_WIDTH, height=int(SCREEN_HEIGHT / 4))
         
@@ -44,11 +40,14 @@ class LobbyWindow(Window):
 
 
     def get_available_rooms(self):
+        print("get_available_rooms")
         if(self.check_selected()):
+            print("selected room: " + self.selected_room)
             return
 
         self.room_selection.delete(0, 'end')
 
+        print("available rooms: " + str(self.serverAPI.GetAvailableRooms()))
         for room in self.serverAPI.GetAvailableRooms():
             self.room_selection.insert(tk.END, str(room))
         

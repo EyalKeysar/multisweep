@@ -51,11 +51,14 @@ class GameWindow(Window):
 
     def UpdateGrid(self):
         if(self.in_update):
+            print("blocked")
             self.parent.after(100, self.UpdateGrid)
+
         self.in_update = True
         gcngs = self.serverAPI.GetGameChanges()
 
         if(gcngs == []):
+            print("No changes")
             pass
         else:
             for change in gcngs:
@@ -90,6 +93,8 @@ class GameWindow(Window):
 
         if(self.game_running):
             self.parent.after(100, self.UpdateGrid)
+        else:
+            print("Game Ended")
 
 
 
@@ -102,7 +107,8 @@ class GameWindow(Window):
         if((column, row) in self.flags):
             return
 
-        res = self.serverAPI.OpenCell(column, row)
+        self.serverAPI.OpenCell(column, row)
+        return
         
 
     def right_click(self, event):

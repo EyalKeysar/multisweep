@@ -27,7 +27,6 @@ class RoomWindow(Window):
 
 
         self.title_label = tk.Label(self, text=("room " + self.serverAPI.GetUsername()), bg = TITLE_BG_CLR, width=SCREEN_WIDTH, height=SIGN_IN_TITLE_HEIGHT, font = TITLE_TXT_FONT)
-        self.goback_button = tk.Button(self, text="Go Back", command=self.GoBack)
         self.num_of_mines_scale = tk.Scale(self, from_=MIN_MINES, to=MAX_MINES, orient=tk.HORIZONTAL, length=int(SCREEN_WIDTH / 2), label="number of mines") 
         self.boardsize_scale = tk.Scale(self, from_=MIN_SIZE, to=MAX_SIZE, orient=tk.HORIZONTAL, length=int(SCREEN_WIDTH / 2), label="grid size")
 
@@ -37,7 +36,6 @@ class RoomWindow(Window):
         self.start_game_button = tk.Button(self, text="Start Game", command=self.start_game)
 
         self.title_label.pack()
-        self.goback_button.pack()
         self.num_of_mines_scale.pack()
         self.boardsize_scale.pack()
         self.start_game_button.pack()
@@ -52,9 +50,6 @@ class RoomWindow(Window):
                 self.players_list.insert(tk.END, str(player))
 
             self.parent.after(1000, self.get_players_in_my_room)
-
-    def GoBack(self):
-        pass
 
     def start_game(self):
         if (self.serverAPI.SetGameSettings(self.num_of_mines_scale.get(), self.boardsize_scale.get())):

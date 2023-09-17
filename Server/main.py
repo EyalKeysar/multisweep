@@ -43,8 +43,11 @@ class Server:
             room = [room for room in self.rooms if client in room.clients][0]
             if(room == None):
                 print("HandleClient: client in game but not in room")
+                client.in_handle = False
                 return
             self.handle_client_ingame(client, room)
+            client.in_game = False
+            client.in_handle = False
             return
 
         client_socket = client.GetSocket()
@@ -180,8 +183,9 @@ class Server:
                         for cur_client in room.clients:
                             cur_client.in_game = True
                         self.handle_client_ingame(client, room)
+
+
             elif(command == GET_GAME_CHANGES):
-                
                 num_of_changes = int(parameters)
                 if(num_of_changes > len(client.game_changes)):
                     num_of_changes = len(client.game_changes)
@@ -190,6 +194,9 @@ class Server:
                 for change in changes:
                     respond += str(change[0]) + ',' + str(change[1]) + ',' + str(change[2]) + ';'
                 client_socket.send((GET_GAME_CHANGES + respond).encode())
+
+            elif(command == OPEN_CELL_REQ):
+                client_socket.send(OPEN_CELL_RES_FALSE.encode())
 
 
             else:
@@ -206,17 +213,18 @@ class Server:
             room.StartGame()
 
         while True:
-
             if((room.won or room.lost) and is_host):
                 for client in room.clients:
-                    client.in_game = False
-                self.rooms.remove(room)
-                print("WWWWWWWWWWWW")
+                    if(room.won):
+                        client.game_changes.append((GAMEWON, 0, 0))
+                    else:
+                        client.game_changes.append((GAMELOST, 0, 0))
                 return
+            
             elif(room.won or room.lost):
+                client.game_changes.append((GAMEWON, 0, 0) if room.won else (GAMELOST, 0, 0))
                 client.in_game = False
                 room.clients.remove(client)
-                print("WWWWWWWWWWWWWWWWWWWW")
                 return
 
             client_socket = client.GetSocket()
@@ -259,23 +267,25 @@ class Server:
             
             elif(command == OPEN_CELL_REQ):
                 if(client.IsAuthenticated()):
-                    if(room.MyTurn(client)):
-                        
-                        x, y = parameters.split(';')
-                        x = int(x)
-                        y = int(y)
-                        res = room.OpenCell(x, y)
-                        if(res):
-                            client_socket.send(OPEN_CELL_RES_TRUE.encode())
-                            print(f"OPEN_CELL {x} {y} success")
-                        else:
-                            client_socket.send(OPEN_CELL_RES_FALSE.encode())
-                            print(f"OPEN_CELL {x} {y} failed")
-                        room.NextTurn()
-
-                    else:
-                        print("OPEN_CELL not your turn")
+                    if(room.lost or room.won):
                         client_socket.send(OPEN_CELL_RES_FALSE.encode())
+                    else:
+                        if(room.MyTurn(client)):
+                            x, y = parameters.split(';')
+                            x = int(x)
+                            y = int(y)
+                            res = room.OpenCell(x, y)
+                            if(res):
+                                client_socket.send(OPEN_CELL_RES_TRUE.encode())
+                                print(f"OPEN_CELL {x} {y} success")
+                            else:
+                                client_socket.send(OPEN_CELL_RES_FALSE.encode())
+                                print(f"OPEN_CELL {x} {y} failed")
+                            room.NextTurn()
+
+                        else:
+                            print("OPEN_CELL not your turn")
+                            client_socket.send(OPEN_CELL_RES_FALSE.encode())
                 else:
                     print("OPEN_CELL not authenticated")
                     client_socket.send(OPEN_CELL_RES_FALSE.encode())

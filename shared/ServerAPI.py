@@ -55,6 +55,7 @@ class ServerAPI:
         return self.username
         
     def GetAvailableRooms(self):
+        print("GetAvailableRooms")
         self.server_socket.send(GET_AVAILABLE_ROOMS_REQ.encode())
         try:
             data = self.server_socket.recv(1024).decode()
@@ -178,7 +179,7 @@ class ServerAPI:
         self.server_socket.send((GET_GAME_CHANGES + str(num_of_changes)).encode())
         try:
             data = self.server_socket.recv(1024).decode()
-            print(data)
+            print("change data = " + data)
             if(data.startswith(GET_GAME_CHANGES)):
                 current = data[len(GET_GAME_CHANGES):].split(';')
                 changes_tuple_list = []
@@ -194,15 +195,18 @@ class ServerAPI:
 
                 return changes_tuple_list
             else:
+                print("Changes not started with " + GET_GAME_CHANGES)
                 return []
         
         except socket.timeout:
+            print("timeout")
             return []
         
     def OpenCell(self, x, y):
         self.server_socket.send((OPEN_CELL_REQ + str(x) + ';' + str(y)).encode())
         try:
             data = self.server_socket.recv(1024).decode()
+            print("OpenCell: " + data)
         except socket.timeout:
             return False
         
