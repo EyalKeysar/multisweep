@@ -17,9 +17,6 @@ class MainWindow(Window):
         self.title(GAME_NAME)
         self.resizable(False, False)
 
-        self.connection_status_label = tk.Label(
-            self, text="Disconnected", bg="#FF0000", font=CONNECTION_STATUS_BAR_TXT_FONT, width=SCREEN_WIDTH, height=CONNECTION_STATUS_BAR_HEIGHT)
-        
         self.title_label = tk.Label(
             self, text = SIGN_IN_TITLE_TXT, bg = TITLE_BG_CLR, width=SCREEN_WIDTH, height=SIGN_IN_TITLE_HEIGHT, font = TITLE_TXT_FONT)
         
@@ -29,7 +26,6 @@ class MainWindow(Window):
         self.register_button = tk.Button(
             self, text = "Register",command=self.register_command , font=BTN_FONT, bg=BTN_BG_CLR, width=BTN_WIDTH, height=BTN_HEIGHT, activebackground=BTN_CLR_ON_CLICK)
 
-        self.connection_status_label.pack()
         self.title_label.pack()
         self.login_button.pack()
         self.register_button.pack()
@@ -37,8 +33,5 @@ class MainWindow(Window):
     def login_command(self):
         self.window_handler.PushWindow(LoginWindow, self.serverAPI)
         
-
-
     def register_command(self):
-        self.window_handler.PushWindow(RegisterWindow, self.serverAPI)        
-
+        self.window_handler.PushWindow(RegisterWindow, self.serverAPI)

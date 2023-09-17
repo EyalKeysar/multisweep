@@ -46,24 +46,25 @@ class GameWindow(Window):
                 row.append(btn)
             self.buttons.append(row)
 
+        self.TurnIndicator = tk.Label(self, text="Turn", bg=YOUR_TURN_COLOR, width=1, height=1)
+        self.TurnIndicator.grid(row=grid_size + 1, column=0, columnspan=grid_size, sticky=tk.W + tk.E + tk.N + tk.S)
+        self.UpdateTurnIndicator()
+
         self.UpdateGrid()
 
 
     def UpdateGrid(self):
         if(self.in_update):
-            print("blocked")
             self.parent.after(100, self.UpdateGrid)
 
         self.in_update = True
         gcngs = self.serverAPI.GetGameChanges()
 
         if(gcngs == []):
-            print("No changes")
             pass
         else:
             for change in gcngs:
                 if(change[0] == GAMELOST):
-                    print(change)
                     self.game_running = False
                     self.game_res = False
                     print("Game Lost")
@@ -125,8 +126,13 @@ class GameWindow(Window):
             self.flags.append((column, row))
 
     def UpdateTurnIndicator(self):
-        your_turn = False
-        TEXT = "Turn"
-        for i in range(len(TEXT)):
-            l = tk.Label(self, text=TEXT[i], bg=YOUR_TURN_COLOR if your_turn else NOT_YOUR_TURN_COLOR, width=1, height=1)
-            l.grid(row=0, column=i)
+        try:
+            if(self.serverAPI.IsItMyTurn()):
+                self.TurnIndicator.config(bg=YOUR_TURN_COLOR)
+            else:
+                self.TurnIndicator.config(bg=NOT_YOUR_TURN_COLOR)
+        except:
+            pass
+
+        if(self.game_running):
+            self.parent.after(100, self.UpdateTurnIndicator)

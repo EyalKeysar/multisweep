@@ -265,6 +265,14 @@ class Server:
                 client_socket.send((GET_GAME_SETTINGS_RES + str(room.num_of_mines) + ';' + str(room.board_size)).encode())
                 print(f"GET_GAME_SETTINGS {room.num_of_mines} {room.board_size} success")
 
+            elif(command == IS_IT_MY_TURN_REQ):
+                if(room.MyTurn(client)):
+                    client_socket.send(IS_IT_MY_TURN_RES_TRUE.encode())
+                    print(f"IS_IT_MY_TURN true")
+                else:
+                    client_socket.send(IS_IT_MY_TURN_RES_FALSE.encode())
+                    print(f"IS_IT_MY_TURN false")
+
             elif(command == GET_GAME_CHANGES):
                 if(client in room.clients):
                     num_of_changes = int(parameters)
