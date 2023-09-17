@@ -181,6 +181,7 @@ class Server:
                             cur_client.in_game = True
                         self.handle_client_ingame(client, room)
             elif(command == GET_GAME_CHANGES):
+                
                 num_of_changes = int(parameters)
                 if(num_of_changes > len(client.game_changes)):
                     num_of_changes = len(client.game_changes)
