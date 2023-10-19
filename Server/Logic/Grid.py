@@ -88,6 +88,8 @@ class Grid():
             print()
 
     def open_cell(self, x, y):
+        if(self.upper_grid[y][x] == OPEN):
+            return False
         self.open_recursive(x, y)
         return True
         
