@@ -18,7 +18,7 @@ class GameWindow(Window):
         self.game_running = True
         self.game_res = None
 
-        self.geometry(f"{GAME_SCREEN_WIDTH}x{GAME_SCREEN_HEIGHT}")
+        self.geometry(f"{(BUTTONS_WIDTH * grid_size * WIDTH_GAME_SCREEN_CONST)}x{(BUTTONS_HEIGHT * grid_size* HEIGHT_GAME_SCREEN_CONST)}")
         self.title('game')
         self.resizable(False, False)
 
@@ -33,11 +33,11 @@ class GameWindow(Window):
             for x in range(grid_size):
                 
                 if((x, y) in self.flags):
-                    btn = tk.Button(self, text="F", width=2, height=1, font=GAME_BUTTON_FONT)
+                    btn = tk.Button(self, text="F", width=BUTTONS_WIDTH, height=BUTTONS_HEIGHT, font=GAME_BUTTON_FONT)
                 else:
                     btn = tk.Button(self, 
                                 text=str(" " if self.grid.grid[y][x] == CLOSED_CELL else self.grid.grid[y][x]), 
-                                width=2, height=1, font=GAME_BUTTON_FONT,
+                                width=BUTTONS_WIDTH, height=BUTTONS_HEIGHT, font=GAME_BUTTON_FONT,
                                 state=tk.DISABLED if self.grid.grid[y][x] != CLOSED_CELL else tk.NORMAL)
 
                 btn.grid(row=y, column=x)
@@ -46,7 +46,7 @@ class GameWindow(Window):
                 row.append(btn)
             self.buttons.append(row)
 
-        self.TurnIndicator = tk.Label(self, text="Turn", bg=YOUR_TURN_COLOR, width=1, height=1)
+        self.TurnIndicator = tk.Label(self, text="Turn", bg=YOUR_TURN_COLOR, width=BUTTONS_WIDTH, height=BUTTONS_HEIGHT)
         self.TurnIndicator.grid(row=grid_size + 1, column=0, columnspan=grid_size, sticky=tk.W + tk.E + tk.N + tk.S)
         self.UpdateTurnIndicator()
 
@@ -117,9 +117,10 @@ class GameWindow(Window):
         clicked_button = event.widget
         button_info = clicked_button.grid_info()
         row, column = button_info['row'], button_info['column']
-        print(f"Flag Placed at (row={row}, column={column})")
+        if(self.grid.grid[row][column] != CLOSED_CELL):
+            return
         if((column, row) in self.flags):
-            self.buttons[row][column].config(text=" ")
+            self.buttons[row][column].config(text=" " if self.grid.grid[row][column] == CLOSED_CELL else str(self.grid.grid[row][column]))
             self.flags.remove((column, row))
         else:
             self.buttons[row][column].config(text="F")
