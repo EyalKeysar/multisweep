@@ -1,6 +1,7 @@
 import socket
 
 from shared.NetConstants import *
+from shared.socket_protocol import send, recv
 
 class ServerAPI:
     def __init__(self):
@@ -13,18 +14,18 @@ class ServerAPI:
         print("Connected to server")
 
     def CheckConnection(self):
-        self.server_socket.send(PING_REQ.encode())
+        send(self.server_socket, PING_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             return data == PING_RES
         
         except socket.timeout:
             return False
 
     def Login(self, username, password):
-        self.server_socket.send((LOGIN_REQ + username + ';' + password).encode())
+        send(self.server_socket, (LOGIN_REQ + username + ';' + password).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == LOGIN_RES_TRUE):
                 self.is_authenticated = True
                 self.username = username
@@ -36,9 +37,9 @@ class ServerAPI:
             return False
         
     def Register(self, username, password, email):
-        self.server_socket.send((REGISTER_REQ + username + ';' + password + ';' + email).encode())
+        send(self.server_socket, (REGISTER_REQ + username + ';' + password + ';' + email).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == REGISTER_RES_TRUE):
                 self.is_authenticated = True
                 self.username = username
@@ -53,9 +54,9 @@ class ServerAPI:
         return self.username
         
     def GetAvailableRooms(self):
-        self.server_socket.send(GET_AVAILABLE_ROOMS_REQ.encode())
+        send(self.server_socket, GET_AVAILABLE_ROOMS_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data.startswith(GET_AVAILABLE_ROOMS_RES)):
                 return data[len(GET_AVAILABLE_ROOMS_RES):].split(';')
             else:
@@ -65,9 +66,9 @@ class ServerAPI:
             return []
         
     def CreateRoom(self):
-        self.server_socket.send(ADD_ROOM_REQ.encode())
+        send(self.server_socket, ADD_ROOM_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == ADD_ROOM_RES_TRUE):
                 return True
             else:
@@ -77,9 +78,9 @@ class ServerAPI:
             return False
         
     def JoinRoom(self, roomname):
-        self.server_socket.send((JOIN_ROOM_REQ + roomname).encode())
+        send(self.server_socket, (JOIN_ROOM_REQ + roomname).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == JOIN_ROOM_RES_TRUE):
                 return True
             else:
@@ -90,9 +91,9 @@ class ServerAPI:
         
 
     def GetHostUsername(self):
-        self.server_socket.send(GET_HOST_USERNAME_REQ.encode())
+        send(self.server_socket, GET_HOST_USERNAME_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data.startswith(GET_HOST_USERNAME_RES)):
                 return data[len(GET_HOST_USERNAME_RES):]
             else:
@@ -102,9 +103,9 @@ class ServerAPI:
             return None
     
     def GetUsersInMyRoom(self):
-        self.server_socket.send(GET_USERS_IN_MY_ROOM_REQ.encode())
+        send(self.server_socket, GET_USERS_IN_MY_ROOM_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data.startswith(GET_USERS_IN_MY_ROOM_RES)):
                 return data[len(GET_USERS_IN_MY_ROOM_RES):].split(';')
             else:
@@ -114,9 +115,9 @@ class ServerAPI:
             return []
         
     def SetGameSettings(self, num_of_mines, boardsize):
-        self.server_socket.send((SET_GAME_SETTINGS_REQ + str(num_of_mines) + ';' + str(boardsize)).encode())
+        send(self.server_socket, (SET_GAME_SETTINGS_REQ + str(num_of_mines) + ';' + str(boardsize)).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == SET_GAME_SETTINGS_RES_TRUE):
                 return True
             else:
@@ -126,9 +127,9 @@ class ServerAPI:
             return False
         
     def GetGameSettings(self):
-        self.server_socket.send(GET_GAME_SETTINGS_REQ.encode())
+        send(self.server_socket, GET_GAME_SETTINGS_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data.startswith(GET_GAME_SETTINGS_RES)):
                 return data[len(GET_GAME_SETTINGS_RES):].split(';')
             else:
@@ -138,9 +139,9 @@ class ServerAPI:
             return []
         
     def StartGame(self):
-        self.server_socket.send(START_GAME_REQ.encode())
+        send(self.server_socket, START_GAME_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == START_GAME_RES_TRUE):
                 return True
             else:
@@ -150,23 +151,21 @@ class ServerAPI:
             return False
         
     def IsGameStarted(self):
-        self.server_socket.send(IS_GAME_STARTED_REQ.encode())
+        send(self.server_socket, IS_GAME_STARTED_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == IS_GAME_STARTED_RES_TRUE):
-                print("IsGameStarted True")
                 return True
             else:
-                print("IsGameStarted False")
                 return False
         
         except socket.timeout:  
             return False
         
     def GetGameChanges(self, num_of_changes=NUM_OF_CHANGES_EACH_PASS):
-        self.server_socket.send((GET_GAME_CHANGES + str(num_of_changes)).encode())
+        send(self.server_socket, (GET_GAME_CHANGES + str(num_of_changes)).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data.startswith(GET_GAME_CHANGES)):
                 current = data[len(GET_GAME_CHANGES):].split(';')
                 changes_tuple_list = []
@@ -181,7 +180,6 @@ class ServerAPI:
 
                 return changes_tuple_list
             else:
-                print("Changes not started with " + GET_GAME_CHANGES)
                 return []
         
         except socket.timeout:
@@ -189,9 +187,9 @@ class ServerAPI:
             return []
         
     def IsItMyTurn(self):
-        self.server_socket.send(IS_IT_MY_TURN_REQ.encode())
+        send(self.server_socket, IS_IT_MY_TURN_REQ.encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
             if(data == IS_IT_MY_TURN_RES_TRUE):
                 return True
             else:
@@ -201,9 +199,9 @@ class ServerAPI:
             return False
         
     def OpenCell(self, x, y):
-        self.server_socket.send((OPEN_CELL_REQ + str(x) + ';' + str(y)).encode())
+        send(self.server_socket, (OPEN_CELL_REQ + str(x) + ';' + str(y)).encode())
         try:
-            data = self.server_socket.recv(1024).decode()
+            data = recv(self.server_socket, 1024).decode()
         except socket.timeout:
             return False
         
